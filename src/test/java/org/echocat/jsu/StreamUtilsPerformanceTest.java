@@ -1,26 +1,24 @@
 package org.echocat.jsu;
 
 import org.echocat.units4j.bytes.ByteCount;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import java.lang.management.MemoryMXBean;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.System.gc;
 import static java.lang.management.ManagementFactory.getMemoryMXBean;
-import static org.echocat.jsu.StreamUtils.generate;
-import static org.echocat.jsu.StreamUtils.until;
+import static org.echocat.jsu.StreamUtils.*;
 import static org.echocat.units4j.bytes.ByteCount.valueOf;
 import static org.echocat.unittest.utils.matchers.CompareTo.isLessThan;
 import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
 import static org.junit.Assert.assertThat;
 
-@Ignore
 public class StreamUtilsPerformanceTest {
 
     private static final MemoryMXBean MEMORY_MX_BEAN = getMemoryMXBean();
@@ -48,13 +46,32 @@ public class StreamUtilsPerformanceTest {
         final AtomicLong serial = new AtomicLong();
         final AtomicLong expectedSerial = new AtomicLong();
         final Stream<Long> stream = generate(serial::getAndIncrement)
-            .limit(100000000);
+            .limit(POLLUTION_TEST_RUNS);
 
         stream.forEach(actual -> {
             final long expected = expectedSerial.getAndIncrement();
             assertThat(actual, isEqualTo(expected));
             if (actual % 100000 == 0) {
                 assertHeapIsNotPolluted(POTENTIAL_LONGS_IN_MEMORY_ON_POLLUTION_TESTS);
+            }
+        });
+    }
+
+    @Test
+    public void batchDoesNotPolluteMemory() throws Exception {
+        final AtomicLong serial = new AtomicLong();
+        final AtomicLong expectedSerial = new AtomicLong();
+        final Stream<Long> baseStream = generate(serial::getAndIncrement)
+            .limit(POLLUTION_TEST_RUNS);
+        final Stream<List<Long>> stream = batch(baseStream, 10);
+
+        stream.forEach(actualBatch -> {
+            for (final Long actual : actualBatch) {
+                final long expected = expectedSerial.getAndIncrement();
+                assertThat(actual, isEqualTo(expected));
+                if (actual % 100000 == 0) {
+                    assertHeapIsNotPolluted(POTENTIAL_LONGS_IN_MEMORY_ON_POLLUTION_TESTS);
+                }
             }
         });
     }

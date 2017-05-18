@@ -32,11 +32,10 @@ public class Batch<T> extends AbstractSpliterator<List<T>> {
         final List<T> batch = new ArrayList<>(batchSize);
         for (int i = 0; i < batchSize; i++) {
             if (!source().tryAdvance(batch::add)) {
-                if (batch.isEmpty()) {
-                    return false;
+                if (!batch.isEmpty()) {
+                    consumer.accept(batch);
                 }
-                consumer.accept(batch);
-                return true;
+                return false;
             }
         }
         consumer.accept(batch);

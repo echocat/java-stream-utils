@@ -1,15 +1,18 @@
 package org.echocat.jsu.support;
 
-import java.util.Objects;
+import javax.annotation.Nonnull;
+import java.sql.SQLException;
+
+import static java.util.Objects.requireNonNull;
 
 public class UncheckedSqlException extends RuntimeException {
 
-    public UncheckedSqlException(String message, Throwable cause) {
-        super(message, Objects.requireNonNull(cause));
+    public UncheckedSqlException(@Nonnull String message, @Nonnull SQLException cause) {
+        super(requireNonNull(message), requireNonNull(cause));
     }
 
-    public UncheckedSqlException(Throwable cause) {
-        super(Objects.requireNonNull(cause));
+    public UncheckedSqlException(@Nonnull SQLException cause) {
+        super(requireNonNull(cause));
     }
 
 }
