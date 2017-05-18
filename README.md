@@ -3,7 +3,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.echocat.java-stream-utils/java-stream-utils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.echocat.java-stream-utils/java-stream-utils)
 [![Build Status](https://travis-ci.org/echocat/java-stream-utils.svg?branch=master)](https://travis-ci.org/echocat/java-stream-utils)
 [![codecov](https://codecov.io/gh/echocat/java-stream-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/echocat/java-stream-utils)
-[![Dependency Status](https://www.versioneye.com/user/projects/58cecc7ccef50000242b6e67/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58cecc7ccef50000242b6e67)
+[![Dependency Status](https://www.versioneye.com/user/projects/591dbce0db8883003d3fc6ee/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/591dbce0db8883003d3fc6ee)
 
 Provides utils to deal with Java Streams. Especially add missing features like `until` and `batch`.
 
