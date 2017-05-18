@@ -85,6 +85,19 @@ StreamUtils.batch(stream, 10)
     .forEach(System.out::println);
 ```
 
+How to integrate a batch back again into a single stream?
+```java
+Stream<Integer> sourceStream = ...;
+Stream<List<Integer>> batchedStream = StreamUtils.batch(sourceStream, 10);
+Stream<Integer> enrichedStream = batchedStream.flatMap(batch -> {
+    // Do something with the batch...
+    ...
+    // Flat map all elements again into a single element stream...
+    return batch.stream(); 
+});
+enrichedStream.forEach(System.out::println);
+```
+
 ### ResultSet `toStream`
 
 > This is one of the missing features of JDBC API.
