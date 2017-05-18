@@ -5,7 +5,7 @@
 [![codecov](https://codecov.io/gh/echocat/java-stream-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/echocat/java-stream-utils)
 [![Dependency Status](https://www.versioneye.com/user/projects/591dbce0db8883003d3fc6ee/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/591dbce0db8883003d3fc6ee)
 
-Provides utils to deal with Java Streams. Especially add missing features like `until` and `batch`.
+Provides utils to deal with Java Streams. Especially add missing features like `takeWhile` and `batch`.
 
 ## Topics
 
@@ -16,19 +16,19 @@ Provides utils to deal with Java Streams. Especially add missing features like `
 
 ## Features
 
-* [Stream `until`](#stream-until)
+* [Stream `takeWhile`](#stream-takewhile)
 * [Stream `generate`](#stream-generate)
-* [Stream `batch`](#stream-until)
+* [Stream `batch`](#stream-batch)
 * [ResultSet `toStream`](#resultset-tostream)
 * [ResultSet `toStream` with mapper](#resultset-tostream-with-mapper)
 
-### Stream `until`
+### Stream `takeWhile`
 
 > This is one of the missing features of Java 8 streaming API.
 
 Continue a stream only until all elements matches a specific predicate.
 
-Reference: [`<T> Stream<T> StreamUtils.until(Stream<T> input, Predicate<T> predicate)`](/src/main/java/org/echocat/jsu/StreamUtils.java)
+Reference: [`<T> Stream<T> StreamUtils.takeWhile(Stream<T> input, Predicate<T> predicate)`](/src/main/java/org/echocat/jsu/StreamUtils.java)
 
 Example:
 ```java
@@ -36,7 +36,7 @@ Example:
 // 66 will not appear in the stdout.
 Random random = new Random();
 Stream<Integer> stream = Stream.generate(() -> random.nextInt(100));
-StreamUtils.until(stream, number -> number != 66)
+StreamUtils.takeWhile(stream, number -> number != 66)
     .forEach(System.out::println);
 ```
 
@@ -46,7 +46,7 @@ StreamUtils.until(stream, number -> number != 66)
 
 Generate a stream and decide by your own when it should be done.
 The regular Streaming API could only produce endless streams.
-A solution could be our [Stream `until`](#stream-until) but our `generate` is sometimes a smarter solution.
+A solution could be our [Stream `takeWhile`](#stream-takewhile) but our `generate` is sometimes a smarter solution.
 
 Reference: [`<T> Stream<T> StreamUtils.generate(Stream<T> input, Predicate<T> predicate)`](/src/main/java/org/echocat/jsu/StreamUtils.java)
 

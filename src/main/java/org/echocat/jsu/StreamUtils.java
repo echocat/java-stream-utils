@@ -13,8 +13,8 @@ import static org.echocat.jsu.Generator.Value.valueOf;
 public final class StreamUtils {
 
     @Nonnull
-    public static <T> Stream<T> until(@Nonnull Stream<? extends T> source, @Nonnegative @Nonnull Predicate<T> predicate) {
-        return stream(SpliteratorUtils.until(source.spliterator(), predicate), false)
+    public static <T> Stream<T> takeWhile(@Nonnull Stream<? extends T> source, @Nonnegative @Nonnull Predicate<T> predicate) {
+        return stream(SpliteratorUtils.takeWhile(source.spliterator(), predicate), false)
             .onClose(() -> AutoCloseableUtils.closeQuietly(source));
     }
 

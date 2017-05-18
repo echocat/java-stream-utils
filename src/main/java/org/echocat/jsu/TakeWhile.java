@@ -7,14 +7,14 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class Until<T> extends AbstractSpliterator<T> {
+public class TakeWhile<T> extends AbstractSpliterator<T> {
 
     @Nonnull
     private final Spliterator<? extends T> source;
     @Nonnull
     private final Predicate<? super T> predicate;
 
-    public Until(
+    public TakeWhile(
         @Nonnull Spliterator<? extends T> source,
         @Nonnull Predicate<? super T> predicate
     ) {

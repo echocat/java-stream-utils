@@ -17,17 +17,17 @@ import static org.mockito.Mockito.mock;
 public class SpliteratorUtilsUnitTest {
 
     @Test
-    public void until() throws Exception {
+    public void takeWhile() throws Exception {
         //noinspection unchecked
         final Spliterator<Long> source = mock(Spliterator.class);
         final Predicate<Long> predicate = candidate -> candidate < 100;
 
-        final Spliterator<Long> actual = SpliteratorUtils.until(source, predicate);
+        final Spliterator<Long> actual = SpliteratorUtils.takeWhile(source, predicate);
 
-        assertThat(actual, isInstanceOf(Until.class));
+        assertThat(actual, isInstanceOf(TakeWhile.class));
 
-        assertThat(((Until<Long>) actual).source(), isSameAs(source));
-        assertThat(((Until<Long>) actual).predicate(), isSameAs(predicate));
+        assertThat(((TakeWhile<Long>) actual).source(), isSameAs(source));
+        assertThat(((TakeWhile<Long>) actual).predicate(), isSameAs(predicate));
     }
 
     @Test

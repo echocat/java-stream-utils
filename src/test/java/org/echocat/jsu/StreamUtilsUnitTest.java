@@ -25,10 +25,10 @@ import static org.junit.Assert.assertThat;
 public class StreamUtilsUnitTest {
 
     @Test
-    public void untilSimple() throws Exception {
+    public void takeWhileSimple() throws Exception {
         final AtomicLong serial = new AtomicLong();
         final List<Long> compareTo = new ArrayList<>();
-        final List<Long> actual = until(generate(() -> {
+        final List<Long> actual = takeWhile(generate(() -> {
             final long current = serial.getAndIncrement();
             if (current >= 20000) {
                 return end();
@@ -42,10 +42,10 @@ public class StreamUtilsUnitTest {
     }
 
     @Test
-    public void untilCouldBeLimitedBefore() throws Exception {
+    public void takeWhileCouldBeLimitedBefore() throws Exception {
         final AtomicLong serial = new AtomicLong();
         final List<Long> expected = new ArrayList<>();
-        final List<Long> actual = until(generate(() -> {
+        final List<Long> actual = takeWhile(generate(() -> {
             final long current = serial.getAndIncrement();
             if (current >= 20000) {
                 return end();
@@ -59,10 +59,10 @@ public class StreamUtilsUnitTest {
     }
 
     @Test
-    public void untilCouldBeLimitedAfter() throws Exception {
+    public void takeWhileCouldBeLimitedAfter() throws Exception {
         final AtomicLong serial = new AtomicLong();
         final List<Long> expected = new ArrayList<>();
-        final List<Long> actual = until(generate(() -> {
+        final List<Long> actual = takeWhile(generate(() -> {
             final long current = serial.getAndIncrement();
             if (current >= 20000) {
                 return end();

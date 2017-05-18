@@ -26,10 +26,10 @@ public class StreamUtilsPerformanceTest {
     private static final ByteCount POTENTIAL_LONGS_IN_MEMORY_ON_POLLUTION_TESTS = ByteCount.valueOf(POLLUTION_TEST_RUNS).multiply(8).divide(4);
 
     @Test
-    public void untilDoesNotPolluteMemory() throws Exception {
+    public void takeWhileDoesNotPolluteMemory() throws Exception {
         final AtomicLong serial = new AtomicLong();
         final AtomicLong expectedSerial = new AtomicLong();
-        final Stream<Long> stream = until(generate(serial::getAndIncrement), candidate -> candidate <= MAX_VALUE)
+        final Stream<Long> stream = takeWhile(generate(serial::getAndIncrement), candidate -> candidate <= MAX_VALUE)
             .limit(POLLUTION_TEST_RUNS);
 
         stream.forEach(actual -> {

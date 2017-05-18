@@ -18,12 +18,12 @@ import static org.echocat.unittest.utils.matchers.IsSameAs.isSameAs;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class UntilUnitTest {
+public class TakeWhileUnitTest {
 
     @Test
     public void simple() throws Exception {
         final List<Long> source = givenListWithNLongs(2000);
-        final Until<Long> actual = new Until<>(source.spliterator(), candidate -> candidate < 1000);
+        final TakeWhile<Long> actual = new TakeWhile<>(source.spliterator(), candidate -> candidate < 1000);
         final List<Long> actualList = asList(actual);
         assertThat(actualList, hasSize(1000));
         assertThat(actualList, isEqualTo(source.subList(0, 1000)));
@@ -32,7 +32,7 @@ public class UntilUnitTest {
     @Test
     public void endsBeforePredicateIsReached() throws Exception {
         final List<Long> source = givenListWithNLongs(500);
-        final Until<Long> actual = new Until<>(source.spliterator(), candidate -> candidate < 1000);
+        final TakeWhile<Long> actual = new TakeWhile<>(source.spliterator(), candidate -> candidate < 1000);
         final List<Long> actualList = asList(actual);
         assertThat(actualList, hasSize(500));
         assertThat(actualList, isEqualTo(source));
@@ -44,7 +44,7 @@ public class UntilUnitTest {
         final Spliterator<Long> source = mock(Spliterator.class);
         final Predicate<Long> predicate = candidate -> candidate < 100;
 
-        final Until<Long> actual = new Until<>(source, predicate);
+        final TakeWhile<Long> actual = new TakeWhile<>(source, predicate);
 
         assertThat(actual.source(), isSameAs(source));
         assertThat(actual.predicate(), isSameAs(predicate));
