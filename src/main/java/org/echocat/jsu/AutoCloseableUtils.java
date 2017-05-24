@@ -1,15 +1,14 @@
 package org.echocat.jsu;
 
-import org.echocat.jsu.support.SqlRunnable;
-import org.echocat.jsu.support.UncheckedSqlException;
+import org.echocat.jsu.support.Callable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Closeable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
@@ -36,15 +35,21 @@ public final class AutoCloseableUtils {
     }
 
     @Nonnull
-    public static <T extends AutoCloseable> T doOnClose(@Nonnull Class<T> type, @Nonnull T instance, @Nullable SqlRunnable... runnablesExecuteOnClose) {
+    public static <T extends AutoCloseable> T doOnClose(@Nonnull Class<T> type, @Nonnull T instance, @Nullable Callable... callablesExecuteOnClose) {
+        if (callablesExecuteOnClose == null || callablesExecuteOnClose.length == 0) {
+            return instance;
+        }
         final Method specificCloseMethod = typeSpecificCloseMethodOf(instance);
         //noinspection unchecked
         return (T) newProxyInstance(type.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
             try {
                 return method.invoke(instance, args);
+            } catch (final InvocationTargetException e) {
+                //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
+                throw e.getTargetException();
             } finally {
                 if (CLOSE_METHOD.equals(method) || method.equals(specificCloseMethod)) {
-                    run(runnablesExecuteOnClose);
+                    call(callablesExecuteOnClose);
                 }
             }
         });
@@ -67,20 +72,16 @@ public final class AutoCloseableUtils {
         return null;
     }
 
-    static void run(@Nullable SqlRunnable... runnablesExecuteOnClose) throws UncheckedSqlException {
-        if (runnablesExecuteOnClose != null) {
-            for (final SqlRunnable runnable : runnablesExecuteOnClose) {
-                try {
-                    runnable.run();
-                } catch (final SQLException e) {
-                    throw new UncheckedSqlException(e);
-                }
+    static void call(@Nullable Callable... callablesExecuteOnClose) throws Exception {
+        if (callablesExecuteOnClose != null) {
+            for (final Callable callable : callablesExecuteOnClose) {
+                callable.call();
             }
         }
     }
 
     @Nonnull
-    private static Method resolveCloseMethodOf(@Nonnull Class<?> type) {
+    static Method resolveCloseMethodOf(@Nonnull Class<?> type) {
         try {
             return type.getMethod("close");
         } catch (final NoSuchMethodException e) {
