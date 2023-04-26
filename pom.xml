@@ -71,7 +71,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <resources>
             <resource>
@@ -146,7 +145,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.9</version>
+                    <version>0.8.10</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -244,6 +243,31 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>maven-central</id>
+            <distributionManagement>
+                <repository>
+                    <id>oss-sonatype-releases</id>
+                    <url>dav:https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.13</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>oss-sonatype-releases</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <issueManagement>
@@ -252,11 +276,32 @@
     </issueManagement>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/echocat/java-stream-utils</url>
+        </snapshotRepository>
         <repository>
-            <id>oss-sonartype-releases</id>
-            <url>dav:https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/echocat/java-stream-utils</url>
         </repository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <id>echocat</id>
+            <url>https://packages.echocat.org/maven</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <scm>
         <connection>scm:git://github.com/echocat/java-stream-utils.git</connection>

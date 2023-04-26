@@ -1,15 +1,11 @@
 # Utils for Java Streams
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.echocat.java-stream-utils/java-stream-utils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.echocat.java-stream-utils/java-stream-utils)
-[![Build Status](https://travis-ci.org/echocat/java-stream-utils.svg?branch=master)](https://travis-ci.org/echocat/java-stream-utils)
-[![codecov](https://codecov.io/gh/echocat/java-stream-utils/branch/master/graph/badge.svg)](https://codecov.io/gh/echocat/java-stream-utils)
-[![Dependency Status](https://www.versioneye.com/user/projects/591dbce0db8883003d3fc6ee/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/591dbce0db8883003d3fc6ee)
-
 Provides utils to deal with Java Streams. Especially add missing features like `takeWhile` and `batch`.
 
 ## Topics
 
 * [Features](#features)
+* [Getting Started](#getting-started)
 * [FAQ](#faq)
 * [Contributing](#contributing)
 * [License](#license)
@@ -132,6 +128,64 @@ Example:
 Stream<String> stream = JdbcUtils.toStream(resultSet, row -> row.getString(1));
 stream
     .forEach(System.out::println));
+```
+
+## Getting started
+
+### Dependency
+
+#### 1. Register our repository (optional)
+
+You can directly register our repository if you want always the latest version. The central can be versions behind.
+
+##### Maven
+
+```xml
+<repositories>
+    <repository>
+        <id>central</id>
+        <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+        <id>echocat</id>
+        <url>https://packages.echocat.org/maven</url>
+    </repository>
+</repositories>
+```
+
+##### Gradle
+
+```groovy
+repositories {
+    mavenCentral()
+    maven {
+        url "https://packages.echocat.org/maven"
+    }
+}
+```
+
+#### 2. Pick your version
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.echocat.java-stream-utils/java-stream-utils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.echocat.java-stream-utils/java-stream-utils)
+
+Find your desired version you want to install (usually the latest one) [by looking it up in our repository](https://github.com/echocat/java-stream-utils/packages/) or directly at [the Maven Central](http://search.maven.org/#search|ga|1|g:org.echocat.java-stream-utils%20AND%20a:java-stream-utils).
+
+#### 3. Add the dependency
+
+##### Maven
+
+```xml 
+<dependency>
+    <groupId>org.echocat.java-stream-utils</groupId>
+    <artifactId>java-stream-utils</artifactId>
+    <version><!-- THE VERSION --></version>
+</dependency>
+```
+
+##### Gradle
+
+```groovy
+compile 'org.echocat.java-stream-utils:java-stream-utils:<THE VERSION>'
 ```
 
 ## FAQ
