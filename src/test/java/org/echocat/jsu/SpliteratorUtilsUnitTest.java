@@ -1,9 +1,8 @@
 package org.echocat.jsu;
 
-import org.echocat.jsu.Generator.Value;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -11,18 +10,18 @@ import java.util.function.Supplier;
 import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
 import static org.echocat.unittest.utils.matchers.IsInstanceOf.isInstanceOf;
 import static org.echocat.unittest.utils.matchers.IsSameAs.isSameAs;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class SpliteratorUtilsUnitTest {
 
     @Test
-    public void takeWhile() throws Exception {
+    void takeWhile() {
         //noinspection unchecked
         final Spliterator<Long> source = mock(Spliterator.class);
         final Predicate<Long> predicate = candidate -> candidate < 100;
 
-        final Spliterator<Long> actual = SpliteratorUtils.takeWhile(source, predicate);
+        final var actual = SpliteratorUtils.takeWhile(source, predicate);
 
         assertThat(actual, isInstanceOf(TakeWhile.class));
 
@@ -31,12 +30,12 @@ public class SpliteratorUtilsUnitTest {
     }
 
     @Test
-    public void batchWithBatchSizeSupplier() throws Exception {
+    void batchWithBatchSizeSupplier() {
         //noinspection unchecked
         final Spliterator<Long> source = mock(Spliterator.class);
         final Supplier<Integer> batchSizeSupplier = () -> 10;
 
-        final Spliterator<List<Long>> actual = SpliteratorUtils.batch(source, batchSizeSupplier);
+        final var actual = SpliteratorUtils.batch(source, batchSizeSupplier);
 
         assertThat(actual, isInstanceOf(Batch.class));
 
@@ -45,12 +44,12 @@ public class SpliteratorUtilsUnitTest {
     }
 
     @Test
-    public void batchWithBatchSize() throws Exception {
+    void batchWithBatchSize() {
         //noinspection unchecked
         final Spliterator<Long> source = mock(Spliterator.class);
         final int batchSize = 10;
 
-        final Spliterator<List<Long>> actual = SpliteratorUtils.batch(source, batchSize);
+        final var actual = SpliteratorUtils.batch(source, batchSize);
 
         assertThat(actual, isInstanceOf(Batch.class));
 
@@ -59,18 +58,19 @@ public class SpliteratorUtilsUnitTest {
     }
 
     @Test
-    public void generate() throws Exception {
-        final Generator<Integer> generator = Value::end;
+    void generate() {
+        final Generator<Integer> generator = Optional::empty;
 
-        final Spliterator<Integer> actual = SpliteratorUtils.generate(generator);
+        final var actual = SpliteratorUtils.generate(generator);
 
-        assertThat(actual, isInstanceOf(ContinuingGenerator.class));
+        assertThat(actual, isInstanceOf(ContinuingSupplier.class));
 
-        assertThat(((ContinuingGenerator<Integer>) actual).generator(), isSameAs(generator));
+        assertThat(((ContinuingSupplier<Integer>) actual).generator(), isSameAs(generator));
     }
 
     @Test
-    public void constructor() throws Exception {
+    public void constructor() {
+        //noinspection InstantiationOfUtilityClass
         new SpliteratorUtils();
     }
 

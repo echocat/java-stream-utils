@@ -28,8 +28,8 @@ public class Batch<T> extends AbstractSpliterator<List<T>> {
 
     @Override
     public boolean tryAdvance(@Nonnull Consumer<? super List<T>> consumer) {
-        final int batchSize = batchSize().get();
-        final List<T> batch = new ArrayList<>(batchSize);
+        final var batchSize = batchSize().get();
+        final var batch = new ArrayList<T>(batchSize);
         for (int i = 0; i < batchSize; i++) {
             if (!source().tryAdvance(batch::add)) {
                 if (!batch.isEmpty()) {

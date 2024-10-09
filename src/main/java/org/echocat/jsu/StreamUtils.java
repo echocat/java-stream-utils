@@ -1,28 +1,28 @@
 package org.echocat.jsu;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import static org.echocat.jsu.AutoCloseableUtils.closeQuietly;
+
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
-import static java.util.stream.StreamSupport.stream;
-import static org.echocat.jsu.Generator.Value.valueOf;
+import java.util.stream.StreamSupport;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 
 public final class StreamUtils {
 
     @Nonnull
     public static <T> Stream<T> takeWhile(@Nonnull Stream<? extends T> source, @Nonnegative @Nonnull Predicate<T> predicate) {
-        return stream(SpliteratorUtils.takeWhile(source.spliterator(), predicate), false)
-            .onClose(() -> AutoCloseableUtils.closeQuietly(source));
+        //noinspection unchecked
+        return (Stream<T>) source.takeWhile(predicate)
+            .onClose(() -> closeQuietly(source));
     }
 
     @Nonnull
     public static <T> Stream<List<T>> batch(@Nonnull Stream<? extends T> source, @Nonnegative @Nonnull Supplier<Integer> batchSize) {
-        //noinspection unchecked,rawtypes
-        return (Stream) stream(SpliteratorUtils.batch(source.spliterator(), batchSize), false)
-            .onClose(() -> AutoCloseableUtils.closeQuietly(source));
+        return StreamSupport.<List<T>>stream(SpliteratorUtils.batch(source.spliterator(), batchSize), false)
+            .onClose(() -> closeQuietly(source));
     }
 
     @Nonnull
@@ -31,15 +31,14 @@ public final class StreamUtils {
     }
 
     @Nonnull
-    public static <T> Stream<T> generate(@Nonnull Generator<? extends T> supplier) {
-        //noinspection unchecked
-        return (Stream<T>) stream(SpliteratorUtils.generate(supplier), false)
-            .onClose(() -> AutoCloseableUtils.closeQuietly(supplier));
+    public static <T> Stream<T> generate(@Nonnull Generator<? extends T> generator) {
+        return generate(generator, false);
     }
 
     @Nonnull
-    public static <T> Stream<T> generate(@Nonnull Supplier<? extends T> supplier) {
-        return generate(() -> valueOf(supplier.get()));
+    public static <T> Stream<T> generate(@Nonnull Generator<? extends T> generator, boolean parallel) {
+        return StreamSupport.<T>stream(SpliteratorUtils.generate(generator), parallel)
+            .onClose(() -> AutoCloseableUtils.closeQuietly(generator));
     }
 
 }

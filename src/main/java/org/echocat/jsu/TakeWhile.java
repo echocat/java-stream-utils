@@ -25,7 +25,7 @@ public class TakeWhile<T> extends AbstractSpliterator<T> {
 
     @Override
     public boolean tryAdvance(@Nonnull Consumer<? super T> consumer) {
-        final AtomicReference<T> reference = new AtomicReference<>();
+        final var reference = new AtomicReference<T>();
         if (!source().tryAdvance(reference::set)) {
             return false;
         }

@@ -1,9 +1,13 @@
 package org.echocat.jsu;
 
-import org.junit.Test;
+import static java.util.stream.Collectors.toList;
+import static org.echocat.unittest.utils.matchers.HasSize.hasSize;
+import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
+import static org.echocat.unittest.utils.matchers.IsSameAs.isSameAs;
+import static org.echocat.unittest.utils.matchers.IterableMatchers.containsOnlyElementsThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,22 +15,18 @@ import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 
-import static java.util.stream.Collectors.toList;
-import static org.echocat.unittest.utils.matchers.HasSize.hasSize;
-import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
-import static org.echocat.unittest.utils.matchers.IsSameAs.isSameAs;
-import static org.echocat.unittest.utils.matchers.IterableMatchers.containsOnlyElementsThat;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.Test;
 
 public class BatchUnitTest {
 
     @Test
-    public void simple() throws Exception {
-        final List<Long> source = givenListWithNLongs(1000);
-        final Spliterator<List<Long>> actual = new Batch<>(source.spliterator(), () -> 10);
-        final List<List<Long>> actualList = asList(actual);
+    void simple() {
+        final var source = givenListWithNLongs(1000);
+        final var actual = new Batch<>(source.spliterator(), () -> 10);
+        final var actualList = asList(actual);
         assertThat(actualList, hasSize(100));
         assertThat(actualList, containsOnlyElementsThat(hasSize(10)));
 
@@ -40,20 +40,21 @@ public class BatchUnitTest {
     }
 
     @Test
-    public void constructor() throws Exception {
+    void constructor() {
         //noinspection unchecked
         final Spliterator<Long> source = mock(Spliterator.class);
         final Supplier<Integer> batchSizeSupplier = () -> 10;
 
-        final Batch<Long> instance = new Batch<>(source, batchSizeSupplier);
+        final var instance = new Batch<>(source, batchSizeSupplier);
 
         assertThat(instance.source(), isSameAs(source));
         assertThat(instance.batchSize(), isSameAs(batchSizeSupplier));
     }
 
+    @SuppressWarnings("SameParameterValue")
     @Nonnull
     protected static List<Long> givenListWithNLongs(@Nonnegative int count) {
-        final AtomicLong serial = new AtomicLong();
+        final var serial = new AtomicLong();
         return Stream.generate(serial::getAndIncrement)
             .limit(count)
             .collect(toList());
@@ -61,9 +62,9 @@ public class BatchUnitTest {
 
     @Nonnull
     protected static <T> List<T> asList(@Nonnull Spliterator<T> source) {
-        final List<T> result = new ArrayList<>();
+        final var result = new ArrayList<T>();
         //noinspection StatementWithEmptyBody
-        while (source.tryAdvance(result::add)) { ; }
+        while (source.tryAdvance(result::add)) {}
         return result;
     }
 
