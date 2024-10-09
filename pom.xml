@@ -250,11 +250,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/echocat/hugo-maven-plugin</url>
+            <url>https://maven.pkg.github.com/echocat/java-stream-utils</url>
         </snapshotRepository>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/echocat/hugo-maven-plugin</url>
+            <url>https://maven.pkg.github.com/echocat/java-stream-utils</url>
         </repository>
     </distributionManagement>
 
