@@ -39,7 +39,7 @@ public final class AutoCloseableUtils {
         if (callablesExecuteOnClose == null || callablesExecuteOnClose.length == 0) {
             return instance;
         }
-        final Method specificCloseMethod = typeSpecificCloseMethodOf(instance);
+        final var specificCloseMethod = typeSpecificCloseMethodOf(instance);
         //noinspection unchecked
         return (T) newProxyInstance(type.getClassLoader(), new Class[]{type}, (proxy, method, args) -> {
             try {

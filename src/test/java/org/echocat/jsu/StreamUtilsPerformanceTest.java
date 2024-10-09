@@ -1,15 +1,5 @@
 package org.echocat.jsu;
 
-import org.echocat.units4j.bytes.ByteCount;
-import org.junit.Test;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import java.lang.management.MemoryMXBean;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
-
 import static java.lang.Long.MAX_VALUE;
 import static java.lang.System.gc;
 import static java.lang.management.ManagementFactory.getMemoryMXBean;
@@ -17,7 +7,16 @@ import static org.echocat.jsu.StreamUtils.*;
 import static org.echocat.units4j.bytes.ByteCount.valueOf;
 import static org.echocat.unittest.utils.matchers.CompareTo.isLessThan;
 import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.lang.management.MemoryMXBean;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+
+import org.echocat.units4j.bytes.ByteCount;
+import org.junit.jupiter.api.Test;
 
 public class StreamUtilsPerformanceTest {
 
@@ -26,10 +25,10 @@ public class StreamUtilsPerformanceTest {
     private static final ByteCount POTENTIAL_LONGS_IN_MEMORY_ON_POLLUTION_TESTS = ByteCount.valueOf(POLLUTION_TEST_RUNS).multiply(8).divide(4);
 
     @Test
-    public void takeWhileDoesNotPolluteMemory() throws Exception {
-        final AtomicLong serial = new AtomicLong();
-        final AtomicLong expectedSerial = new AtomicLong();
-        final Stream<Long> stream = takeWhile(generate(serial::getAndIncrement), candidate -> candidate <= MAX_VALUE)
+    void takeWhileDoesNotPolluteMemory() {
+        final var expectedSerial = new AtomicLong();
+        //noinspection ConstantValue
+        final var stream = takeWhile(generate(endless()), candidate -> candidate <= MAX_VALUE)
             .limit(POLLUTION_TEST_RUNS);
 
         stream.forEach(actual -> {
@@ -42,10 +41,9 @@ public class StreamUtilsPerformanceTest {
     }
 
     @Test
-    public void generateDoesNotPolluteMemory() throws Exception {
-        final AtomicLong serial = new AtomicLong();
-        final AtomicLong expectedSerial = new AtomicLong();
-        final Stream<Long> stream = generate(serial::getAndIncrement)
+    void generateDoesNotPolluteMemory() {
+        final var expectedSerial = new AtomicLong();
+        final var stream = generate(endless())
             .limit(POLLUTION_TEST_RUNS);
 
         stream.forEach(actual -> {
@@ -58,12 +56,11 @@ public class StreamUtilsPerformanceTest {
     }
 
     @Test
-    public void batchDoesNotPolluteMemory() throws Exception {
-        final AtomicLong serial = new AtomicLong();
-        final AtomicLong expectedSerial = new AtomicLong();
-        final Stream<Long> baseStream = generate(serial::getAndIncrement)
+    void batchDoesNotPolluteMemory() {
+        final var expectedSerial = new AtomicLong();
+        final var baseStream = generate(endless())
             .limit(POLLUTION_TEST_RUNS);
-        final Stream<List<Long>> stream = batch(baseStream, 10);
+        final var stream = batch(baseStream, 10);
 
         stream.forEach(actualBatch -> {
             for (final Long actual : actualBatch) {
@@ -84,9 +81,16 @@ public class StreamUtilsPerformanceTest {
         return valueOf(MEMORY_MX_BEAN.getHeapMemoryUsage().getUsed());
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static void assertHeapIsNotPolluted(@Nonnull @Nonnegative ByteCount maximumUsedMemory) {
-        final ByteCount actualUsage = getHeapSafe();
+        final var actualUsage = getHeapSafe();
         assertThat(actualUsage, isLessThan(maximumUsedMemory));
+    }
+
+    @Nonnull
+    private static Generator<Long> endless() {
+        final var serial = new AtomicLong();
+        return () -> Optional.of(serial.getAndIncrement());
     }
 
 }

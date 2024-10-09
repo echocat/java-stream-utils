@@ -1,18 +1,17 @@
 package org.echocat.jsu;
 
-import org.echocat.jsu.support.SqlFunction;
-import org.echocat.jsu.support.UncheckedSqlException;
+import static org.echocat.jsu.AutoCloseableUtils.closeQuietly;
+import static org.echocat.jsu.StreamUtils.generate;
 
-import javax.annotation.Nonnull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import javax.annotation.Nonnull;
 
-import static org.echocat.jsu.AutoCloseableUtils.closeQuietly;
-import static org.echocat.jsu.Generator.Value.end;
-import static org.echocat.jsu.Generator.Value.valueOf;
-import static org.echocat.jsu.StreamUtils.generate;
+import org.echocat.jsu.support.SqlFunction;
+import org.echocat.jsu.support.UncheckedSqlException;
 
 public final class JdbcUtils {
 
@@ -21,9 +20,9 @@ public final class JdbcUtils {
         return generate(() -> {
             try {
                 if (!resultSet.next()) {
-                    return end();
+                    return Optional.empty();
                 }
-                return valueOf(resultSet);
+                return Optional.of(resultSet);
             } catch (final SQLException e) {
                 throw new UncheckedSqlException(e);
             }

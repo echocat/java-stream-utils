@@ -1,11 +1,11 @@
 package org.echocat.jsu;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 
 public final class SpliteratorUtils {
 
@@ -26,7 +26,7 @@ public final class SpliteratorUtils {
 
     @Nonnull
     public static <T> Spliterator<T> generate(@Nonnull Generator<? extends T> generator) {
-        return new ContinuingGenerator<>(generator);
+        return new ContinuingSupplier<>(generator);
     }
 
 }

@@ -1,50 +1,50 @@
 package org.echocat.jsu;
 
-import org.junit.Test;
+import static java.util.stream.Collectors.toList;
+import static org.echocat.unittest.utils.matchers.HasSize.hasSize;
+import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
+import static org.echocat.unittest.utils.matchers.IsSameAs.isSameAs;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 
-import static java.util.stream.Collectors.toList;
-import static org.echocat.unittest.utils.matchers.HasSize.hasSize;
-import static org.echocat.unittest.utils.matchers.IsEqualTo.isEqualTo;
-import static org.echocat.unittest.utils.matchers.IsSameAs.isSameAs;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.Test;
 
 public class TakeWhileUnitTest {
 
     @Test
-    public void simple() throws Exception {
-        final List<Long> source = givenListWithNLongs(2000);
-        final TakeWhile<Long> actual = new TakeWhile<>(source.spliterator(), candidate -> candidate < 1000);
-        final List<Long> actualList = asList(actual);
+    void simple() {
+        final var source = givenListWithNLongs(2000);
+        final var actual = new TakeWhile<>(source.spliterator(), candidate -> candidate < 1000);
+        final var actualList = asList(actual);
         assertThat(actualList, hasSize(1000));
         assertThat(actualList, isEqualTo(source.subList(0, 1000)));
     }
 
     @Test
-    public void endsBeforePredicateIsReached() throws Exception {
-        final List<Long> source = givenListWithNLongs(500);
-        final TakeWhile<Long> actual = new TakeWhile<>(source.spliterator(), candidate -> candidate < 1000);
-        final List<Long> actualList = asList(actual);
+    void endsBeforePredicateIsReached() {
+        final var source = givenListWithNLongs(500);
+        final var actual = new TakeWhile<>(source.spliterator(), candidate -> candidate < 1000);
+        final var actualList = asList(actual);
         assertThat(actualList, hasSize(500));
         assertThat(actualList, isEqualTo(source));
     }
 
     @Test
-    public void constructor() throws Exception {
+    void constructor() {
         //noinspection unchecked
         final Spliterator<Long> source = mock(Spliterator.class);
         final Predicate<Long> predicate = candidate -> candidate < 100;
 
-        final TakeWhile<Long> actual = new TakeWhile<>(source, predicate);
+        final var actual = new TakeWhile<>(source, predicate);
 
         assertThat(actual.source(), isSameAs(source));
         assertThat(actual.predicate(), isSameAs(predicate));
@@ -52,7 +52,7 @@ public class TakeWhileUnitTest {
 
     @Nonnull
     protected static List<Long> givenListWithNLongs(@Nonnegative int count) {
-        final AtomicLong serial = new AtomicLong();
+        final var serial = new AtomicLong();
         return Stream.generate(serial::getAndIncrement)
             .limit(count)
             .collect(toList());
@@ -60,9 +60,9 @@ public class TakeWhileUnitTest {
 
     @Nonnull
     protected static <T> List<T> asList(@Nonnull Spliterator<T> source) {
-        final List<T> result = new ArrayList<>();
+        final var result = new ArrayList<T>();
         //noinspection StatementWithEmptyBody
-        while (source.tryAdvance(result::add)) { ; }
+        while (source.tryAdvance(result::add)) {}
         return result;
     }
 
