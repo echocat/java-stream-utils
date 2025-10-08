@@ -34,15 +34,15 @@ jobs:
           cache: maven
 
       - name: Adjust version
-        run: mvn --no-transfer-progress --batch-mode versions:set "-DnewVersion=${{ github.event.release.tag_name }}"
+        run: ./mvnw --no-transfer-progress --batch-mode versions:set "-DnewVersion=${{ github.event.release.tag_name }}"
 
       - name: Maven Deploy - GitHub Packages
-        run: mvn --no-transfer-progress --batch-mode -Psign "-Dgpg.passphrase=${{ secrets.PASSPHRASE }}" -DskipTests=true clean deploy
+        run: ./mvnw --no-transfer-progress --batch-mode -Psign "-Dgpg.passphrase=${{ secrets.PASSPHRASE }}" -DskipTests=true clean deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Maven Deploy - Maven Central
-        run: mvn --settings=build/settings-maven-central.xml --no-transfer-progress --batch-mode -Psign -Pmaven-central "-Dgpg.passphrase=${{ secrets.PASSPHRASE }}" -DskipTests=true clean deploy
+        run: ./mvnw --settings=build/settings-maven-central.xml --no-transfer-progress --batch-mode -Psign -Pmaven-central "-Dgpg.passphrase=${{ secrets.PASSPHRASE }}" -DskipTests=true clean deploy
         env:
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
