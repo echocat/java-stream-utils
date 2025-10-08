@@ -18,9 +18,9 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'adopt'
           cache: maven
 
       - name: Maven Verify
-        run: mvn --no-transfer-progress --batch-mode --update-snapshots --fail-at-end clean verify
+        run: ./mvnw --no-transfer-progress --batch-mode --update-snapshots --fail-at-end clean verify
